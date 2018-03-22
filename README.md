@@ -1,0 +1,2 @@
+# FreeCodeCamp - Dynamic Web Application Projects - Build a Nightlife Coordination App
+**Using [express](https://expressjs.com/), [aurelia](http://aurelia.io/) and [mongodb](https://github.com/mongodb/node-mongodb-native)**
