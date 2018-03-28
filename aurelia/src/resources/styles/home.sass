@@ -1,0 +1,269 @@
+.home-content
+  flex-direction  : column
+  flex-wrap       : nowrap
+  justify-content : flex-start
+  align-items     : flex-start
+  align-content   : flex-start
+  padding         : 0rem
+  margin          : 0rem
+  overflow        : hidden
+
+  #title
+    display          : flex
+    flex-direction   : row
+    flex-wrap        : nowrap
+    justify-content  : center
+    align-items      : center
+    align-content    : center
+    width            : 100%
+    height           : 2rem
+    font-weight      : bolder
+    padding          : 0.25rem 0rem
+    margin           : 0rem
+    border-bottom    : 1px solid lightgrey
+    box-sizing       : border-box
+    background-color : whitesmoke
+
+    span
+      text-decoration : line-through
+      opacity         : 0.25
+      font-weight     : normal
+
+    img
+      width         : 1.5rem
+      height        : 1.5rem
+      padding       : 0rem
+      margin        : 0rem 0.5rem 0rem 0rem
+      border-radius : 50px
+
+  #search
+    position        : relative
+    display         : flex
+    flex-direction  : row
+    flex-wrap       : wrap
+    justify-content : center
+    align-items     : center
+    align-content   : center
+    width           : 100%
+    height          : 5.5rem
+    box-sizing      : border-box
+
+    #search-title
+      width      : 100%
+      height     : auto
+      text-align : center
+      margin     : 0.75rem 0rem 0rem 0rem
+      padding    : 0rem
+
+      h1
+        display   : inline-block
+        transform : translateX(1.5rem)
+        margin    : 0.75rem 0rem 0rem 0rem
+        padding   : 0rem
+
+      span
+        display   : inline-block
+        transform : translateX(1.5rem)
+        font-size : 0.5rem
+        
+      img
+        display   : inline-block
+        width     : auto
+        height    : 1rem
+        transform : translate(1.5rem, 3px)
+
+    #search-input
+      width            : 50%
+      height           : 1.75rem
+      margin           : 0.25rem 0rem 0.75rem 0rem
+      padding          : 0.25rem 0.5rem
+      z-index          : 2
+      border           : 2px solid lightgrey
+      box-sizing       : border-box
+      background-color : white
+
+    #search-button:active
+      border-color : black
+      z-index      : 3
+
+    #search-button:hover
+      background-color : darkgrey
+
+    #search-button
+      position         : relative
+      display          : flex
+      flex-direction   : row
+      flex-wrap        : wrap
+      justify-content  : center
+      align-items      : center
+      align-content    : center
+      width            : calc(1.75rem + 2px)
+      height           : 1.75rem
+      z-index          : 1
+      transform        : translateX(-2px)
+      background-color : white
+      outline          : none
+      border           : 2px solid lightgrey
+      box-sizing       : border-box
+      margin           : 0.25rem 0rem 0.75rem 0rem
+      cursor           : pointer
+
+      img
+        transform : translateX(1px)
+
+  #results
+    position        : relative
+    display         : block
+    width           : 100%
+    height          : calc(100% - 7.5rem)
+    margin          : 0.5rem 0rem 0rem 0rem
+    padding         : 0rem 1.5rem
+    overflow-x      : hidden
+    overflow-y      : auto
+    box-sizing      : border-box
+
+    .result
+      position         : relative
+      display          : flex
+      flex-direction   : row
+      flex-wrap        : nowrap
+      justify-content  : flex-start
+      align-items      : flex-start
+      align-content    : flex-start
+      width            : 100%
+      height           : 5.5rem
+      margin           : 0.5rem 0rem
+      padding          : 0rem
+      background-color : #f5f5f5
+      border           : 1px solid #e0e0e0
+      box-sizing       : border-box
+      box-shadow       : 0rem 3px 3px -3px #d0d0d0
+
+      .image
+        position   : relative
+        display    : inline-block
+        width      : 5.5rem
+        height     : 5.5rem
+        margin     : 0rem 1rem 0rem 0rem
+        box-sizing : border-box
+        overflow   : hidden
+
+        img
+          position  : absolute
+          left      : 50%
+          top       : 50%
+          transform : translate(-50%, -50%)
+          width     : 8.5rem
+          height    : auto
+
+      .info
+        position        : relative
+        display         : inline-flex
+        flex-direction  : column
+        flex-wrap       : nowrap
+        justify-content : flex-start
+        align-items     : center
+        align-content   : center
+        width           : calc(100% - 6rem)
+        height          : 100%
+        margin          : 0rem
+        padding         : 0rem
+
+        .info-title
+          margin      : 0.65rem 0rem 0.25rem 0rem
+          padding     : 0rem
+          font-size   : 1.25rem
+          font-weight : bolder
+          line-height : 0.75rem
+          color       : steelblue
+
+        .ratings
+          margin      : 0rem
+          padding     : 0rem
+          line-height : 0.5rem
+
+          img
+            width       : 1rem
+            height      : 1rem
+            margin      : 0rem
+            padding     : 0rem
+            line-height : 0.25rem
+
+        .reviews
+          margin      : 0rem
+          padding     : 0rem
+          font-size   : 0.75rem
+          line-height : 0.5rem
+
+        .rsvp
+          margin : 0.25rem 0rem 0rem 0rem
+          padding : 0rem
+
+          .going-button.not-rsvp:active
+            border-color : black
+
+          .going-button.has-rsvp:active
+            border-color : red
+
+          .going-button.not-rsvp:hover
+            background-color : darkgrey
+
+          .going-button.has-rsvp:hover
+            background-color : lightcoral
+
+          .going-button.not-rsvp
+            font-weight      : bold
+            background-color : white
+            border           : 1px solid lightgrey
+
+          .going-button.has-rsvp
+            font-weight      : normal
+            background-color : palegreen
+            border           : 1px solid whitesmoke
+
+          .going-button
+            position         : relative
+            display          : flex
+            flex-direction   : row
+            flex-wrap        : wrap
+            justify-content  : center
+            align-items      : center
+            align-content    : center
+            width            : auto
+            height           : 1.5rem
+            outline          : none
+            box-sizing       : border-box
+            margin           : 0.25rem 0rem 0rem 0rem
+            padding          : 0rem 0.5rem
+            cursor           : pointer
+            outline          : none
+
+        .map:active
+          border-color : black
+
+        .map:hover
+          background-color : darkgrey
+
+        .map
+          position         : absolute
+          bottom           : 0.5rem
+          right            : 0.5rem
+          display          : flex
+          flex-direction   : row
+          justify-content  : center
+          align-items      : center
+          align-content    : center
+          width            : 1.5rem
+          height           : 1.5rem
+          margin           : 0rem
+          padding          : 0rem
+          background-color : white
+          box-sizing       : border-box
+          border           : 1px solid lightgrey
+          border-radius    : 50%
+          cursor           : pointer
+          outline          : none
+
+          img
+            width  : 1rem
+            height : 1rem

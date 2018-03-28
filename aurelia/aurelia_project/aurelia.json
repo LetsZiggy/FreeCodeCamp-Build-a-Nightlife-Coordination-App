@@ -87,7 +87,15 @@
             "main": "aurelia-validation"
           },
           "whatwg-fetch",
-          "aurelia-fetch-client"
+          "aurelia-fetch-client",
+          {
+            "name": "perfect-scrollbar",
+            "path": "../node_modules/perfect-scrollbar",
+            "main": "dist/perfect-scrollbar.min",
+            "resources": [
+              "css/perfect-scrollbar.css"
+            ]
+          }
         ]
       }
     ],
