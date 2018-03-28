@@ -37,6 +37,10 @@ export class Home {
     this.ps = null;
   }
 
+  handleForm(form) {
+
+  }
+
   setRatings(i, rating) {
     i = rating - i;
 
@@ -51,7 +55,7 @@ export class Home {
     }
   }
 
-  setLocation(location) {
+  setMap(location) {
     let address = '';
 
     Object.entries(location).forEach((v, i, a) => {

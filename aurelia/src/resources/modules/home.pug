@@ -11,11 +11,12 @@ template
         h1 Hungry?
         span &nbsp;powered by&nbsp;
         img(src="https://s3-media1.fl.yelpcdn.com/assets/srv0/yelp_design_web/48792dd29811/assets/img/logos_desktop/default.png")
-      input#search-input(type="text" autocomplete="off" placeholder="Type in your location ..." value.bind="state.location")
-      button#search-button
-        img(src="https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/ic_search_black_24px.svg")
-      //- button#search-auto
-      //-   img(src="https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/ic_gps_fixed_black_24px.svg")
+      form#search-form(submit.delegate="handleForm('search-form')")
+        input#search-input(type="text" autocomplete="off" placeholder="Type in your location ..." value.bind="state.location")
+        button#search-button(type="submit")
+          img(src="https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/ic_search_black_24px.svg")
+        //- button#search-auto
+        //-   img(src="https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/ic_gps_fixed_black_24px.svg")
 
     #results
       .result(repeat.for="place of state.places")
@@ -28,5 +29,5 @@ template
           .reviews (${place.review_count} review${place.review_count !== 1 ? 's' : ''})
           .rsvp
             button.going-button(class="${state.rsvp.includes(place.id) ? 'has-rsvp' : 'not-rsvp'}" click.bind="setRSVP(place.id)") ${state.rsvp.includes(place.id) ? 'GOING' : 'RSVP'}
-          a.map(href.bind="setLocation(place.location)" target="_blank")
+          a.map(href.bind="setMap(place.location)" target="_blank")
             img(src="https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/ic_place_black_24px.svg")

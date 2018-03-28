@@ -72,44 +72,57 @@
         height    : 1rem
         transform : translate(1.5rem, 3px)
 
-    #search-input
-      width            : 50%
-      height           : 1.75rem
-      margin           : 0.25rem 0rem 0.75rem 0rem
-      padding          : 0.25rem 0.5rem
-      z-index          : 2
-      border           : 2px solid lightgrey
-      box-sizing       : border-box
-      background-color : white
+    #search-form
+      position        : relative
+      display         : flex
+      flex-direction  : row
+      flex-wrap       : wrap
+      justify-content : center
+      align-items     : center
+      align-content   : center
+      width           : 100%
+      height          : 2.75rem
+      margin          : 0rem
+      padding         : 0rem
 
-    #search-button:active
-      border-color : black
-      z-index      : 3
+      #search-input
+        width            : 50%
+        height           : 1.75rem
+        margin           : 0.25rem 0rem 0.75rem 0rem
+        padding          : 0.25rem 0.5rem
+        z-index          : 2
+        border           : 2px solid lightgrey
+        box-sizing       : border-box
+        background-color : white
 
-    #search-button:hover
-      background-color : darkgrey
+      #search-button:active
+        border-color : black
+        z-index      : 3
 
-    #search-button
-      position         : relative
-      display          : flex
-      flex-direction   : row
-      flex-wrap        : wrap
-      justify-content  : center
-      align-items      : center
-      align-content    : center
-      width            : calc(1.75rem + 2px)
-      height           : 1.75rem
-      z-index          : 1
-      transform        : translateX(-2px)
-      background-color : white
-      outline          : none
-      border           : 2px solid lightgrey
-      box-sizing       : border-box
-      margin           : 0.25rem 0rem 0.75rem 0rem
-      cursor           : pointer
+      #search-button:hover
+        background-color : darkgrey
 
-      img
-        transform : translateX(1px)
+      #search-button
+        position         : relative
+        display          : flex
+        flex-direction   : row
+        flex-wrap        : wrap
+        justify-content  : center
+        align-items      : center
+        align-content    : center
+        width            : calc(1.75rem + 2px)
+        height           : 1.75rem
+        z-index          : 1
+        transform        : translateX(-2px)
+        background-color : white
+        outline          : none
+        border           : 2px solid lightgrey
+        box-sizing       : border-box
+        margin           : 0.25rem 0rem 0.75rem 0rem
+        cursor           : pointer
+
+        img
+          transform : translateX(1px)
 
   #results
     position        : relative
