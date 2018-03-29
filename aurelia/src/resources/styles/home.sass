@@ -163,7 +163,7 @@
       background-color : #f5f5f5
       border           : 1px solid #e0e0e0
       box-sizing       : border-box
-      box-shadow       : 0rem 3px 3px -3px #d0d0d0
+      box-shadow       : 0rem 3px 5px -3px #a0a0a0
 
       .image
         position   : relative
@@ -196,12 +196,24 @@
         padding         : 0rem
 
         .info-title
-          margin      : 0.65rem 0rem 0.25rem 0rem
+          margin      : 0.35rem 0rem 0.25rem 0rem
           padding     : 0rem
-          font-size   : 1.25rem
-          font-weight : bolder
           line-height : 1rem
-          color       : steelblue
+
+          a
+            font-size   : 1.25rem
+            font-weight : bolder
+            line-height : 1rem
+            margin      : 0rem
+            padding     : 0rem
+            color       : steelblue
+
+          span.price
+            margin      : 0rem 0rem 0rem 0.25rem
+            font-size   : 0.5rem
+            font-weight : bolder
+            line-height : 0.5rem
+            color       : darkgrey
 
         .ratings
           margin      : 0rem
@@ -221,7 +233,7 @@
           line-height : 0.125rem
 
         .rsvp
-          margin : 0.25rem 0rem 0rem 0rem
+          margin : 0.35rem 0rem 0rem 0rem
           padding : 0rem
 
           .going-button.not-rsvp:active

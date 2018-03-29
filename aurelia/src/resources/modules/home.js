@@ -81,6 +81,7 @@ export class Home {
     }
     else {
       //   submit place.id & user.username
+      //   need to set date
       //   update state.totalGoing list
       //   update state.user.going list
     }
