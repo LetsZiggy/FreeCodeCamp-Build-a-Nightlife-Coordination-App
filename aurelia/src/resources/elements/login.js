@@ -58,7 +58,11 @@ export class Login {
 
     this.checkNameValue = null;
   }
-
+*/
+  closeLogin() {
+    document.getElementById('login-content').style.display = 'none';
+  }
+/*
   async checkInput(event, form) {
     let errors = { inputLength: false, matching: false };
     let inputs = document.getElementById(form).getElementsByTagName('input');

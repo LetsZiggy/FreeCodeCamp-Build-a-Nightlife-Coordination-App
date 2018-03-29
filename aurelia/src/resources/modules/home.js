@@ -75,11 +75,14 @@ export class Home {
   }
 
   setRSVP(id) {
-    // check if logged in
-    // if not logged in
-    //   show login element
-    // if/after logged in
-    //   submit place.id & user.username
-    //   update state.rsvp list
+    if(!this.state.user.username) {
+      document.getElementById('login-content').style.display = 'flex';
+      this.state.user.pending.push(id);
+    }
+    else {
+      //   submit place.id & user.username
+      //   update state.totalGoing list
+      //   update state.user.going list
+    }
   }
 }
