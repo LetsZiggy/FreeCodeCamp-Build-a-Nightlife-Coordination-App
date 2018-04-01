@@ -1,68 +1,27 @@
-// import {inject, bindable, bindingMode} from 'aurelia-framework';
-// import {Router, Redirect} from 'aurelia-router';
-// import {ApiInterface} from '../services/api-interface';
-// import {state} from '../services/state';
+import {inject, bindable, bindingMode} from 'aurelia-framework';
+import {ApiInterface} from '../services/api-interface';
+import {state} from '../services/state';
 
-// @inject(Router, ApiInterface)
+@inject(ApiInterface)
 export class Login {
-/*
   @bindable({ defaultBindingMode: bindingMode.twoWay }) state = state;
+  @bindable({ defaultBindingMode: bindingMode.twoWay }) radio;
 
-  constructor(Router, ApiInterface) {
-    this.router = Router;
+  constructor(ApiInterface) {
     this.api = ApiInterface;
     this.checkNameValue = null;
     this.checkNameTaken = false;
-    this.radio = null;
   }
 
-  async canActivate(params, routeConfig, navigationInstruction) {
-    if(this.state.user) {
-      let logout = await this.api.logoutUser();
-      this.state.user = null;
-      this.state.expire = null;
-      localStorage.removeItem('freecodecamp-build-a-voting-app');
-      if(this.router.history.previousLocation === '/home' || this.router.history.previousLocation === '/polls') {
-        return(false);
-      }
-      else {
-        return(new Redirect('home'));
-      }
-    }
-  }
-
-  async attached() {
-    if(this.state.user && this.state.expire < Date.now()) {
-      this.state.user = null;
-      this.state.expire = null;
-    }
-
-    if(this.state.login.timer) {
-      this.radio = 'radio-signin';
-      document.getElementById('radio-delay').checked = true;
-      setTimerInterval(this.state, this.radio, 'signin');
-    }
-
-    window.onunload = async (event) => {
-      if(this.state.user) {
-        let data = { user: this.state.user, expire: this.state.expire };
-        localStorage.setItem('freecodecamp-build-a-voting-app', JSON.stringify(data));
-      }
-    };
-  }
-
-  detached() {
+  closeLogin() {
+    document.getElementById('login-content').style.display = 'none';
     if(this.state.login.timer) {
       clearInterval(this.state.login.interval);
     }
 
     this.checkNameValue = null;
   }
-*/
-  closeLogin() {
-    document.getElementById('login-content').style.display = 'none';
-  }
-/*
+
   async checkInput(event, form) {
     let errors = { inputLength: false, matching: false };
     let inputs = document.getElementById(form).getElementsByTagName('input');
@@ -85,18 +44,18 @@ export class Login {
       errors.matching = true;
     }
 
-    setError(form, errors, this.checkNameTaken);
+    this.setError(form, errors, this.checkNameTaken);
     return(true);
   }
 
   clearForm(form) {
     document.getElementById('wrong-login').style.display = 'none';
     document.getElementById(`${form}-submit`).disabled = true;
-    resetForm(document.getElementById(form));
+    this.resetForm(document.getElementById(form));
     return(true);
   }
 
-  async handleForm(form) {
+  async handleLogin(form) {
     let result = null;
     let formSuccess = false;
 
@@ -117,7 +76,7 @@ export class Login {
     if(!formSuccess && form === 'signup') {
       document.getElementById('wrong-login').innerHTML = 'Sorry, we weren\'t able to process your signup.<br>Please try again.';
       document.getElementById('wrong-login').style.display = 'block';
-      resetForm(document.getElementById(form));
+      this.resetForm(document.getElementById(form));
     }
     else if(!formSuccess && (form === 'signin' || form === 'signreset')) {
       if(this.state.login.chance) {
@@ -130,7 +89,7 @@ export class Login {
           document.getElementById('wrong-login').innerHTML = 'You have typed in the wrong username.';
         }
         document.getElementById('wrong-login').style.display = 'block';
-        resetForm(document.getElementById(form));
+        this.resetForm(document.getElementById(form));
       }
       else {
         this.radio = `radio-${form}`;
@@ -139,60 +98,60 @@ export class Login {
         this.state.login.timer = 30 * this.state.login.delay;
         document.getElementById('radio-delay').checked = true;
 
-        setTimerInterval(this.state, this.radio, form);
+        this.setTimerInterval(this.state, this.radio, form);
       }
     }
     else {
       this.state.expire = result.expire;
       this.state.user = document.getElementById(`${form}-username`).value;
-      this.router.navigateToRoute('home');
+      document.getElementById('login-content').style.display = 'none';
+
+      // check pending
     }
   }
-*/
-}
-/*
-function setError(form, errors, checkNameTaken) {
-  if(checkNameTaken && errors.matching) {
-    document.getElementById('wrong-login').innerHTML = 'The username is already in use.<br>Your password doesn\'t match.';
-  }
-  else if(checkNameTaken) {
-    document.getElementById('wrong-login').innerHTML = 'The username is already in use.';
-  }
-  else if(errors.matching) {
-    document.getElementById('wrong-login').innerHTML = 'Your password doesn\'t match.';
-  }
-  else {
-    document.getElementById('wrong-login').innerHTML = 'Username needs at least 6 characters.<br>Password needs at least 8 characters.';
-  }
 
-  if(errors.inputLength || checkNameTaken || errors.matching) {
-    document.getElementById(`${form}-submit`).disabled = true;
-    document.getElementById('wrong-login').style.display = 'block';
-  }
-  else {
-    document.getElementById(`${form}-submit`).disabled = false;
-    document.getElementById('wrong-login').style.display = 'none';
-  }
-}
-
-function resetForm(form) {
-  form.reset();
-  Array.from(form.children).forEach((v, i, a) => {
-    if(v.children[0].hasAttribute('data-length') && v.children[0].getAttribute('data-length') !== '0') {
-      v.children[0].setAttribute('data-length', 0);
+  setError(form, errors, checkNameTaken) {
+    if(checkNameTaken && errors.matching) {
+      document.getElementById('wrong-login').innerHTML = 'The username is already in use.<br>Your password doesn\'t match.';
     }
-  });
-}
+    else if(checkNameTaken) {
+      document.getElementById('wrong-login').innerHTML = 'The username is already in use.';
+    }
+    else if(errors.matching) {
+      document.getElementById('wrong-login').innerHTML = 'Your password doesn\'t match.';
+    }
+    else {
+      document.getElementById('wrong-login').innerHTML = 'Username needs at least 6 characters.<br>Password needs at least 8 characters.';
+    }
 
-function setTimerInterval(state, radio, form) {
-  state.login.interval = setInterval(() => {
-    state.login.timer--;
-    if(state.login.timer === 0) {
-      document.getElementById(radio).checked = true;
+    if(errors.inputLength || checkNameTaken || errors.matching) {
+      document.getElementById(`${form}-submit`).disabled = true;
+      document.getElementById('wrong-login').style.display = 'block';
+    }
+    else {
+      document.getElementById(`${form}-submit`).disabled = false;
       document.getElementById('wrong-login').style.display = 'none';
-      resetForm(document.getElementById(form));
-      clearInterval(state.login.interval);
     }
-  }, 1000);
+  }
+
+  resetForm(form) {
+    form.reset();
+    Array.from(form.children).forEach((v, i, a) => {
+      if(v.children[0].hasAttribute('data-length') && v.children[0].getAttribute('data-length') !== '0') {
+        v.children[0].setAttribute('data-length', 0);
+      }
+    });
+  }
+
+  setTimerInterval(state, radio, form) {
+    state.login.interval = setInterval(() => {
+      state.login.timer--;
+      if(state.login.timer === 0) {
+        document.getElementById(radio).checked = true;
+        document.getElementById('wrong-login').style.display = 'none';
+        this.resetForm(document.getElementById(form));
+        clearInterval(state.login.interval);
+      }
+    }, 1000);
+  }
 }
-*/

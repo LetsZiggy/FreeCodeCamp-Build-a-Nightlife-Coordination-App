@@ -9,36 +9,64 @@ export class Home {
 
   constructor(ApiInterface) {
     this.api = ApiInterface;
+    this.radio = null;
   }
 
-  attached() {
-    this.checkUser = setInterval(() => {
-      if(this.state.user.username && this.state.user.expire < Date.now()) {
+  async attached() {
+    // let location = document.cookie.replace(/(?:(?:^|.*;\s*)ipinfo\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+    if(this.state.user.username && this.state.user.expire && this.state.user.expire - Date.now() > 1) {
+      setTimeout(async () => {
+        let logout = await this.api.logoutUser();
         this.state.user.username = null;
         this.state.user.expire = null;
-      }
-    }, 600000);
+      }, this.state.user.expire - Date.now());
+    }
 
     this.ps = new PerfectScrollbar('#results');
 
     window.onunload = async (event) => {
       if(this.state.user.username) {
-        let data = { username: this.state.user.username, userexpire: this.state.user.expire };
+        let data = JSON.parse(localStorage.getItem("freecodecamp-build-a-nightlife-coordination-app")) || {};
+        data.username = this.state.user.username;
+        data.userexpire = this.state.user.expire;
         localStorage.setItem('freecodecamp-build-a-nightlife-coordination-app', JSON.stringify(data));
       }
-
-      clearInterval(this.checkUser);
     };
   }
 
   detached() {
-    clearInterval(this.checkUser);
     this.ps.destroy();
     this.ps = null;
   }
 
-  handleForm(form) {
+  async openLogin() {
+    if(this.state.user.username) {
+      let data = JSON.parse(localStorage.getItem("freecodecamp-build-a-nightlife-coordination-app")) || {};
+      let logout = await this.api.logoutUser();
+      this.state.user.username = null;
+      this.state.user.expire = null;
 
+      data.username = this.state.user.username;
+      data.userexpire = this.state.user.expire;
+      localStorage.setItem('freecodecamp-build-a-nightlife-coordination-app', JSON.stringify(data));
+    }
+    else {
+      if(this.state.login.timer) {
+        this.radio = 'radio-signin';
+        document.getElementById('radio-delay').checked = true;
+        this.setTimerInterval(this.state, this.radio, 'signin');
+      }
+      document.getElementById('login-content').style.display = 'flex';
+    }
+  }
+
+  async handleSearch(form) {
+    let data = null;
+    if(document.getElementById(form).value.length) {
+      data = await this.api.getPlaces(document.getElementById(form).value);
+    }
+    console.log(data);
   }
 
   setRatings(i, rating) {
@@ -74,10 +102,12 @@ export class Home {
     return(`https://www.google.com/maps/place/${address}/`);
   }
 
-  setRSVP(id) {
+  async setRSVP(id) {
     if(!this.state.user.username) {
       document.getElementById('login-content').style.display = 'flex';
       this.state.user.pending.push(id);
+
+      // login component need to handle id
     }
     else {
       //   submit place.id & user.username
@@ -85,5 +115,26 @@ export class Home {
       //   update state.totalGoing list
       //   update state.user.going list
     }
+  }
+
+  resetForm(form) {
+    form.reset();
+    Array.from(form.children).forEach((v, i, a) => {
+      if(v.children[0].hasAttribute('data-length') && v.children[0].getAttribute('data-length') !== '0') {
+        v.children[0].setAttribute('data-length', 0);
+      }
+    });
+  }
+
+  setTimerInterval(state, radio, form) {
+    state.login.interval = setInterval(() => {
+      state.login.timer--;
+      if(state.login.timer === 0) {
+        document.getElementById(radio).checked = true;
+        document.getElementById('wrong-login').style.display = 'none';
+        this.resetForm(document.getElementById(form));
+        clearInterval(state.login.interval);
+      }
+    }, 1000);
   }
 }

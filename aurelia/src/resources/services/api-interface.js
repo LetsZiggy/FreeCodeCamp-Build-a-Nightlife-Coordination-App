@@ -5,8 +5,8 @@ import {HttpClient} from 'aurelia-fetch-client';
 export class ApiInterface {
   constructor(HttpClient) {
     HttpClient.configure(config => {
-      // config.withBaseUrl('http://localhost:3000/api')
-      config.withBaseUrl('https://letsziggy-freecodecamp-build-a-voting-app.glitch.me/api')
+      config.withBaseUrl('http://localhost:3000/api')
+      // config.withBaseUrl('https://letsziggy-freecodecamp-build-a-voting-app.glitch.me/api')
             .withInterceptor({
               request(request) {
                 return request;
@@ -27,90 +27,48 @@ export class ApiInterface {
     this.http = HttpClient;
   }
 
-  getPolls() {
+  getPlaces(location) {
     return(
-      this.http.fetch(`/polls`, {
-                 method: 'GET',
-                 credentials: 'same-origin',
-                 headers: {
-                   'Accept': 'application/json'
-                 }
-               })
-               .then(response => response.json())
-               .then(data => data.polls)
-    );
-  }
-
-  getPollID() {
-    return(
-      this.http.fetch(`/poll/id`, {
-                 method: 'POST',
-                 credentials: 'same-origin',
-                 headers: {
-                   'Accept': 'application/json'
-                 }
-               })
-               .then(response => response.json())
-               .then(data => data.id)
-    );
-  }
-
-  createPoll(poll) {
-    return(
-      this.http.fetch(`/poll/create`, {
+      this.http.fetch(`/places`, {
                  method: 'POST',
                  credentials: 'same-origin',
                  headers: {
                    'Accept': 'application/json',
                    'Content-Type': 'application/json'
                  },
-                 body: JSON.stringify(poll)
+                 body: JSON.stringify({ location: location })
                })
                .then(response => response.json())
                .then(data => data)
     );
   }
 
-  updatePoll(poll, changes) {
+  setRSVP(place, user) {
     return(
-      this.http.fetch(`/poll/update/${poll.id}`, {
-                 method: 'PUT',
+      this.http.fetch(`/setRSVP/${place}`, {
+                 method: 'POST',
                  credentials: 'same-origin',
                  headers: {
                    'Accept': 'application/json',
                    'Content-Type': 'application/json'
                  },
-                 body: JSON.stringify({ poll: poll, changes: changes })
+                 body: JSON.stringify({ place: place, user: user })
                })
                .then(response => response.json())
                .then(data => data)
     );
   }
 
-  deletePoll(poll) {
+  unsetRSVP(place, user) {
     return(
-      this.http.fetch(`/poll/delete/${poll.id}`, {
-                 method: 'DELETE',
-                 credentials: 'same-origin',
-                 headers: {
-                   'Accept': 'application/json'
-                 }
-               })
-               .then(response => response.json())
-               .then(data => data)
-    );
-  }
-
-  updateVoting(username, poll, newVote, oldVote) {
-    return(
-      this.http.fetch(`/poll/vote/${poll.id}`, {
-                 method: 'PUT',
+      this.http.fetch(`/unsetRSVP/${place}`, {
+                 method: 'POST',
                  credentials: 'same-origin',
                  headers: {
                    'Accept': 'application/json',
                    'Content-Type': 'application/json'
                  },
-                 body: JSON.stringify({ username: username, poll: poll, votes: [newVote, oldVote] })
+                 body: JSON.stringify({ place: place, user: user })
                })
                .then(response => response.json())
                .then(data => data)

@@ -24,7 +24,7 @@ template
     #login-container
       #wrong-login
 
-      form#signin(submit.delegate="handleForm('signin')")
+      form#signin(submit.delegate="handleLogin('signin')")
         fieldset.login-fieldset
           input#signin-username(type="text" placeholder="" minlength="6" keydown.delegate!="checkInput($event, 'signin') & debounce" data-length="0" required)
           hr
@@ -39,7 +39,7 @@ template
           button#signin-submit.submit-button(type="submit" disabled) Submit
           label#signreset-label(for="radio-signreset" click.delegate="clearForm('signin')") Forgot password
 
-      form#signup(submit.delegate="handleForm('signup')")
+      form#signup(submit.delegate="handleLogin('signup')")
         fieldset.login-fieldset
           input#signup-username(type="text" placeholder="" minlength="6" keydown.delegate!="checkInput($event, 'signup') & debounce" data-length="0" required)
           hr
@@ -58,7 +58,7 @@ template
         fieldset.login-fieldset
           button#signup-submit.submit-button(type="submit" disabled) Submit
 
-      form#signreset(submit.delegate="handleForm('signreset')")
+      form#signreset(submit.delegate="handleLogin('signreset')")
         fieldset.login-fieldset
           input#signreset-username(type="text" placeholder="" minlength="6" keydown.delegate!="checkInput($event, 'signreset') & debounce" data-length="0" required)
           hr

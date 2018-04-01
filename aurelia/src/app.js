@@ -7,9 +7,14 @@ export class App {
   attached() {
     let data = JSON.parse(localStorage.getItem("freecodecamp-build-a-nightlife-coordination-app")) || {};
 
-    if(data && data.userexpire > Date.now()) {
-      this.state.user.username = data.username;
-      this.state.user.expire = data.userexpire;
+    if(data && parseInt(data.userexpire) - Date.now() > 1) {
+      this.state.user.username = data.username || null;
+      this.state.user.expire = parseInt(data.userexpire) || null;
+    }
+    else {
+      data.username = this.state.user.username;
+      data.userexpire = this.state.user.expire;
+      localStorage.setItem('freecodecamp-build-a-nightlife-coordination-app', JSON.stringify(data));
     }
   }
 
