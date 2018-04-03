@@ -14,12 +14,10 @@ export class Login {
   }
 
   closeLogin() {
-    document.getElementById('login-content').style.display = 'none';
-    if(this.state.login.timer) {
-      clearInterval(this.state.login.interval);
-    }
-
     this.checkNameValue = null;
+    if(this.state.login.timer) { clearInterval(this.state.login.interval); }
+      document.getElementById('login-content').style.visibility = 'hidden';
+      document.getElementById('login-content').style.pointerEvents = 'none';
   }
 
   async checkInput(event, form) {
@@ -102,11 +100,41 @@ export class Login {
       }
     }
     else {
-      this.state.expire = result.expire;
-      this.state.user = document.getElementById(`${form}-username`).value;
-      document.getElementById('login-content').style.display = 'none';
+      this.state.user.expire = result.expire;
+      this.state.user.username = document.getElementById(`${form}-username`).value;
+      this.resetForm(document.getElementById(form));
+      document.getElementById('login-open-button').innerHTML = 'Logout';
 
-      // check pending
+      let businessIDs = this.state.businesses.map((v, i, a) => v.id);
+      if(businessIDs.length) {
+        let data = await this.api.getGoingUser(businessIDs);
+
+        data.goingUser.forEach((v, i, a) => {
+          this.state.goingUser[v] = true;
+        });
+      }
+
+      this.state.user.pending.forEach(async (v, i, a) => {
+        let result = null;
+
+        if(this.state.goingUser[v] === true) {
+          result = await this.api.unsetRSVP(v, this.state.user.username);
+          if(result) {
+            this.state.goingUser[v] = false;
+            this.state.goingTotal[v]--;
+          }
+        }
+        else {
+          result = await this.api.setRSVP(v, this.state.user.username);
+          if(result) {
+            this.state.goingUser[v] = true;
+            this.state.goingTotal[v]++;
+          }
+        }
+      });
+
+      document.getElementById('login-content').style.visibility = 'hidden';
+      document.getElementById('login-content').style.pointerEvents = 'none';
     }
   }
 

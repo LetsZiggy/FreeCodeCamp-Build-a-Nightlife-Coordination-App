@@ -8,10 +8,10 @@ export const state = {
   user: {
     username: null,
     expire: null,
-    going: [],
     pending: []
   },
   location: null,
-  totalGoing: {},
-  places: []
+  goingUser: {},
+  goingTotal: {},
+  businesses: []
 };

@@ -27,9 +27,9 @@ export class ApiInterface {
     this.http = HttpClient;
   }
 
-  getPlaces(location) {
+  getBusinesses(location) {
     return(
-      this.http.fetch(`/places`, {
+      this.http.fetch(`/businesses`, {
                  method: 'POST',
                  credentials: 'same-origin',
                  headers: {
@@ -43,35 +43,51 @@ export class ApiInterface {
     );
   }
 
-  setRSVP(place, user) {
+  getGoingUser(businessIDs) {
     return(
-      this.http.fetch(`/setRSVP/${place}`, {
+      this.http.fetch(`/goingUser`, {
                  method: 'POST',
                  credentials: 'same-origin',
                  headers: {
                    'Accept': 'application/json',
                    'Content-Type': 'application/json'
                  },
-                 body: JSON.stringify({ place: place, user: user })
+                 body: JSON.stringify({ businessIDs: businessIDs })
                })
                .then(response => response.json())
                .then(data => data)
     );
   }
 
-  unsetRSVP(place, user) {
+  setRSVP(business, user) {
     return(
-      this.http.fetch(`/unsetRSVP/${place}`, {
+      this.http.fetch(`/rsvp/set`, {
                  method: 'POST',
                  credentials: 'same-origin',
                  headers: {
                    'Accept': 'application/json',
                    'Content-Type': 'application/json'
                  },
-                 body: JSON.stringify({ place: place, user: user })
+                 body: JSON.stringify({ business: business, user: user })
                })
                .then(response => response.json())
-               .then(data => data)
+               .then(data => data.update)
+    );
+  }
+
+  unsetRSVP(business, user) {
+    return(
+      this.http.fetch(`/rsvp/unset`, {
+                 method: 'POST',
+                 credentials: 'same-origin',
+                 headers: {
+                   'Accept': 'application/json',
+                   'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify({ business: business, user: user })
+               })
+               .then(response => response.json())
+               .then(data => data.update)
     );
   }
 

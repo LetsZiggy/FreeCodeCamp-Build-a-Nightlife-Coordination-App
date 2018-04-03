@@ -46,10 +46,15 @@ export class Home {
       let logout = await this.api.logoutUser();
       this.state.user.username = null;
       this.state.user.expire = null;
+      document.getElementById('login-open-button').innerHTML = 'Login';
 
       data.username = this.state.user.username;
       data.userexpire = this.state.user.expire;
       localStorage.setItem('freecodecamp-build-a-nightlife-coordination-app', JSON.stringify(data));
+
+      Object.entries(this.state.goingUser).forEach(([key, value]) => {
+        this.state.goingUser[key] = false;
+      });
     }
     else {
       if(this.state.login.timer) {
@@ -57,16 +62,30 @@ export class Home {
         document.getElementById('radio-delay').checked = true;
         this.setTimerInterval(this.state, this.radio, 'signin');
       }
-      document.getElementById('login-content').style.display = 'flex';
+      document.getElementById('login-content').style.visibility = 'visible';
+      document.getElementById('login-content').style.pointerEvents = 'auto';
     }
   }
 
   async handleSearch(form) {
     let data = null;
     if(document.getElementById(form).value.length) {
-      data = await this.api.getPlaces(document.getElementById(form).value);
+      let value = document.getElementById(form).value;
+      data = await this.api.getBusinesses(value);
+
+      this.state.businesses = data.businesses.map((v, i, a) => v);
+      data.businesses.forEach((v, i, a) => {
+        this.state.goingTotal[v.id] = 0;
+        this.state.goingUser[v.id] = false;
+      });
+      data.goingUser.forEach((v, i, a) => {
+        this.state.goingUser[v] = true;
+      });
+      Object.keys(data.goingTotal).map((v, i, a) => {
+        this.state.goingTotal[v] = data.goingTotal[v];
+      });
+
     }
-    console.log(data);
   }
 
   setRatings(i, rating) {
@@ -85,35 +104,63 @@ export class Home {
 
   setMap(location) {
     let address = '';
+    let order = ['address1', 'address2', 'address3', 'city', 'zip_code', 'country', 'state']
 
-    Object.entries(location).forEach((v, i, a) => {
-      if(v[0] !== 'display_address' && v[0] !== 'address2' && v[0] !== 'address3') {
-        if(v[1] !== null && v[1].length > 0) {
-          v[1] = v[1].replace(/\s/g, '+');
-          address += v[1];
-
-          if(v[0] !== 'state') {
-            address += '+';
-          }
+    Object.entries(location).forEach(([key, value]) => {
+      if(key !== 'display_address') {
+        if(value !== null && value.length > 0 && value !== ' ') {
+          location[key] = value.toString().replace(/\s/g, '+');
+        }
+        else {
+          location[key] = '';
         }
       }
     });
 
+    order.forEach((v, i, a) => {
+      if(location[v] !== null && location[v] !== '' && location[v] !== '+') {
+        if(i === 0) {
+          address = location[v];
+        }
+        else {
+          address = `${address}+${location[v]}`;
+        }
+      }
+    });
+
+    address = address.replace(/\+\+/g, '+');
+
     return(`https://www.google.com/maps/place/${address}/`);
   }
 
-  async setRSVP(id) {
-    if(!this.state.user.username) {
-      document.getElementById('login-content').style.display = 'flex';
-      this.state.user.pending.push(id);
-
-      // login component need to handle id
+  async rsvp(id) {
+    if(this.state.user.username === null) {
+      document.getElementById('login-content').style.visibility = 'visible';
+      document.getElementById('login-content').style.pointerEvents = 'auto';
+      if(this.state.user.pending.includes(id)) {
+        this.state.user.pending.splice(this.state.user.pending.indexOf(id), 1);
+      }
+      else {
+        this.state.user.pending.push(id);
+      }
     }
     else {
-      //   submit place.id & user.username
-      //   need to set date
-      //   update state.totalGoing list
-      //   update state.user.going list
+      let result = null;
+
+      if(this.state.goingUser[id] === true) {
+        result = await this.api.unsetRSVP(id, this.state.user.username);
+        if(result) {
+          this.state.goingUser[id] = false;
+          this.state.goingTotal[id]--;
+        }
+      }
+      else {
+        result = await this.api.setRSVP(id, this.state.user.username);
+        if(result) {
+          this.state.goingUser[id] = true;
+          this.state.goingTotal[id] = this.state.goingTotal[id] >= 1 ? this.state.goingTotal[id] + 1 : 1 ;
+        }
+      }
     }
   }
 

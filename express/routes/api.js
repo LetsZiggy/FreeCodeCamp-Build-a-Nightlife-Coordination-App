@@ -8,7 +8,7 @@ const handlePassword = require('./services/handle-password.js');
 
 const dbURL = `mongodb://${process.env.DBUSER}:${process.env.DBPASSWORD}@${process.env.DBURL}/${process.env.DBNAME}`;
 
-router.post('/places', async (req, res, next) => {
+router.post('/businesses', async (req, res, next) => {
   let location = {};
   let body = [];
   if(req.body.location) {
@@ -19,7 +19,6 @@ router.post('/places', async (req, res, next) => {
     location.longitude = req.body.longitude;
   }
 
-  // https://cors-anywhere.herokuapp.com/
   let options = {
     host: 'api.yelp.com',
     path: `/v3/businesses/search?categories=restaurants&${qs.stringify(location)}`,
@@ -29,32 +28,117 @@ router.post('/places', async (req, res, next) => {
     }
   };
 
-  const request = await https.request(options, (response) => {
-    response.setEncoding('utf8');
-    response.on('data', (data) => {
-      body.push(data.toString());
-    });
+  const request = await https.request(
+    {
+      host: 'api.yelp.com',
+      path: `/v3/businesses/search?categories=restaurants&${qs.stringify(location)}`,
+      headers: {
+        Accept: 'application/json',
+        Authorization: process.env.YELP
+      }
+    },
+    async (response) => {
+      response.setEncoding('utf8');
+      response.on('data', (data) => {
+        body.push(data.toString());
+      });
 
-    response.on('end', () => {
-      body = JSON.parse(body.join(''));
+      response.on('end', async () => {
+        let businesses = JSON.parse(body.join('')).businesses;
+        let businessIDs = businesses.map((v, i, a) => v.id);
 
-      // res.json({ places: [], totalGoing: {} });
-      res.json({ type: 'inner', body: body });
-    });
-  })
+        let client = await mongo.connect(dbURL);
+        let db = await client.db(process.env.DBNAME);
+        let collectionRSVPs = await db.collection('build-a-nightlife-coordination-app-rsvp');
+        let find = await collectionRSVPs.find({ id: { $in: businessIDs } }, { projection: { _id: 0, id: 1, users: 1 } }).toArray();
+        client.close();
+
+        let goingUser = [];
+        let dateNow = new Date();
+        let goingTotal = find.reduce((acc, v, i, a) => {
+          let total = 0;
+          Object.entries(v.users).forEach(([key, value]) => {
+            let dateUser = new Date(value);
+            if(dateUser > dateNow) {
+              total++;
+
+              if(req.cookies.id === key) {
+                goingUser.push(v.id);
+              }
+            }
+          });
+          acc[v.id] = total;
+          return(acc);
+        }, {});
+
+        res.json({ businesses: businesses, goingTotal: goingTotal, goingUser: goingUser });
+      });
+  });
 
   request.on('error', (err) => { console.log(err); throw err; });
   request.end();
+});
 
-  // fetch(`https://api.yelp.com/v3/businesses/search?categories=restaurants&${location}`, { headers: { Authorization: process.env.YELP }})
-  // .then(response => response.json())
-  // .then(data => data);
+router.post('/goingUser', async (req, res, next) => {
+  let client = await mongo.connect(dbURL);
+  let db = await client.db(process.env.DBNAME);
+  let collectionRSVPs = await db.collection('build-a-nightlife-coordination-app-rsvp');
+  let find = await collectionRSVPs.find({ id: { $in: req.body.businessIDs } }, { projection: { _id: 0, id: 1, users: 1 } }).toArray();
+  client.close();
+
+  let dateNow = new Date();
+  let goingUser = find.reduce((acc, v, i, a) => {
+    Object.entries(v.users).forEach(([key, value]) => {
+      let dateUser = new Date(value);
+      if(dateUser > dateNow && req.cookies.id === key) {
+        acc.push(v.id);
+      }
+    });
+
+    return(acc);
+  }, []);
+
+  res.json({ goingUser: goingUser });
+});
+
+router.post('/rsvp/set', async (req, res, next) => {
+  let query = `users.${req.cookies.id}`;
+  let date = new Date();
+  date.setDate(date.getDate() + 1);
+  console.log('set', req.body.business, req.cookies.id);
+
+  let client = await mongo.connect(dbURL);
+  let db = await client.db(process.env.DBNAME);
+  let collectionRSVPs = await db.collection('build-a-nightlife-coordination-app-rsvp');
+  let update = await collectionRSVPs.updateOne(
+    { id: req.body.business },
+    { $set: { [query]: date } },
+    { upsert: true }
+  );
+  client.close();
+
+  res.json({ update: true });
+});
+
+router.post('/rsvp/unset', async (req, res, next) => {
+  let query = `users.${req.cookies.id}`;
+
+  let client = await mongo.connect(dbURL);
+  let db = await client.db(process.env.DBNAME);
+  let collectionRSVPs = await db.collection('build-a-nightlife-coordination-app-rsvp');
+  let update = await collectionRSVPs.updateOne(
+    { id: req.body.business },
+    { $unset: { [query]: '' } }
+  );
+  client.close();
+
+  res.json({ update: true });
 });
 
 router.post('/user/checkname', async (req, res, next) => {
   let client = await mongo.connect(dbURL);
   let db = await client.db(process.env.DBNAME);
-  let collectionIDs = await db.collection('build-a-voting-app-ids');
+  let collectionIDs = await db.collection('build-a-nightlife-coordination-app-ids');
   let findID = await collectionIDs.findOne({ type: 'users' }, { _id: 0, type: 0 });
   client.close();
 
@@ -74,7 +158,7 @@ router.post('/user/create', async (req, res, next) => {
 
     let client = await mongo.connect(dbURL);
     let db = await client.db(process.env.DBNAME);
-    let collectionIDs = await db.collection('build-a-voting-app-ids');
+    let collectionIDs = await db.collection('build-a-nightlife-coordination-app-ids');
     let findID = await collectionIDs.findOne({ type: 'users' }, { _id: 0, type: 0 });
     let id = createID(findID.list);
     data.id = id;
@@ -83,13 +167,14 @@ router.post('/user/create', async (req, res, next) => {
       { type: 'users' },
       { $set: { [query]: req.body.username } }
     );
-    let collectionUsers = await db.collection('build-a-voting-app-users');
+    let collectionUsers = await db.collection('build-a-nightlife-coordination-app-users');
     let insertUser = await collectionUsers.insertOne(data);
     client.close();
 
     let date = new Date();
     date.setDate(date.getDate() + 1);
-    res.cookie('id', id, { expires: date, path: '/', httpOnly: true });
+    res.cookie('id', findUser.id, { expires: date, path: '/' });
+    // res.cookie('id', id, { expires: date, path: '/', httpOnly: true });
     // res.cookie('id', id, { expires: date, path: '/', httpOnly: true, secure: true });
 
     res.json({ create: true, expire: (Date.now() + 86400000) });
@@ -105,7 +190,7 @@ router.post('/user/login', async (req, res, next) => {
   if(!req.cookies.id) {
     let client = await mongo.connect(dbURL);
     let db = await client.db(process.env.DBNAME);
-    let collectionUsers = await db.collection('build-a-voting-app-users');
+    let collectionUsers = await db.collection('build-a-nightlife-coordination-app-users');
     let findUser = await collectionUsers.findOne({ username: req.body.username });
     client.close();
 
@@ -121,7 +206,8 @@ router.post('/user/login', async (req, res, next) => {
       else {
         let date = new Date();
         date.setDate(date.getDate() + 1);
-        res.cookie('id', findUser.id, { expires: date, path: '/', httpOnly: true });
+        res.cookie('id', findUser.id, { expires: date, path: '/' });
+        // res.cookie('id', findUser.id, { expires: date, path: '/', httpOnly: true });
         // res.cookie('id', findUser.id, { expires: date, path: '/', httpOnly: true, secure: true });
         res.json({ get: true, expire: (Date.now() + 86400000) });
       }
@@ -144,7 +230,7 @@ router.post('/user/edit', async (req, res, next) => {
   if(!req.cookies.id) {
     let client = await mongo.connect(dbURL);
     let db = await client.db(process.env.DBNAME);
-    let collectionUsers = await db.collection('build-a-voting-app-users');
+    let collectionUsers = await db.collection('build-a-nightlife-coordination-app-users');
     let findUser = await collectionUsers.findOne({ username: req.body.username });
 
     if(!findUser) {
@@ -158,7 +244,8 @@ router.post('/user/edit', async (req, res, next) => {
 
       let date = new Date();
       date.setDate(date.getDate() + 1);
-      res.cookie('id', findUser.id, { expires: date, path: '/', httpOnly: true });
+      res.cookie('id', findUser.id, { expires: date, path: '/' });
+      // res.cookie('id', findUser.id, { expires: date, path: '/', httpOnly: true });
       // res.cookie('id', findUser.id, { expires: date, path: '/', httpOnly: true, secure: true });
       res.json({ update: true, expire: (Date.now() + 86400000) });
     }
