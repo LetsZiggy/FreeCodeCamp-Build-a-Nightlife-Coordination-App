@@ -1,14 +1,4 @@
 {
-  "users": [
-    {
-      "id": "testUser",
-      "name": "testUser",
-      "going": ["place_id"]
-    }
-  ],
-  "totalGoing": {
-    "place_id": {
-      "user_id": 1522434391180
-    }
-  }
+  "users": [],
+  "rsvp": {}
 }

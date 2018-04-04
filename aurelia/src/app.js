@@ -4,8 +4,8 @@ import {state} from './resources/services/state';
 export class App {
   @bindable({ defaultBindingMode: bindingMode.twoWay }) state = state;
 
-  attached() {
-    let data = JSON.parse(localStorage.getItem("freecodecamp-build-a-nightlife-coordination-app")) || {};
+  bind() {
+    let data = JSON.parse(localStorage.getItem('freecodecamp-build-a-nightlife-coordination-app')) || {};
 
     if(data && parseInt(data.userexpire) - Date.now() > 1) {
       this.state.user.username = data.username || null;
