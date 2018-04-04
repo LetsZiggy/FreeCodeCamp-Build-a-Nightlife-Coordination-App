@@ -23,6 +23,10 @@ export class App {
     config.title = 'FreeCodeCamp - Build a Nightlife Coordination App';
     config.map([
       {
+        route: '',
+        redirect: 'home'
+      },
+      {
         route: 'home',
         name: 'home',
         moduleId: './resources/modules/home',
