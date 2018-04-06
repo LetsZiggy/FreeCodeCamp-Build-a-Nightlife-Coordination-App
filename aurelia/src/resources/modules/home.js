@@ -27,9 +27,8 @@ export class Home {
 
     window.onunload = async (event) => {
       if(this.state.user.username) {
-        let data = JSON.parse(localStorage.getItem("freecodecamp-build-a-nightlife-coordination-app")) || {};
-        data.username = this.state.user.username;
-        data.userexpire = this.state.user.expire;
+        let store = JSON.parse(localStorage.getItem("freecodecamp-build-a-nightlife-coordination-app")) || {};
+        let data = { username: this.state.user.username, userexpire: this.state.user.expire };
         localStorage.setItem('freecodecamp-build-a-nightlife-coordination-app', JSON.stringify(data));
       }
     };
