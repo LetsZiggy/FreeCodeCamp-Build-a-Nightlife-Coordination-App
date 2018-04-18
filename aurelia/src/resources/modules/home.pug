@@ -16,8 +16,6 @@ template
         input#search-input(type="text" autocomplete="off" placeholder="Type in your location ..." value.bind="state.location" autofocus)
         button#search-button(type="submit")
           img(src="https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/ic_search_black_24px.svg")
-        //- button#search-auto
-        //-   img(src="https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/ic_gps_fixed_black_24px.svg")
 
     #results
       #result-placeholder(if.bind="state.businesses.length === 0")

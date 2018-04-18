@@ -13,8 +13,6 @@ export class Home {
   }
 
   async attached() {
-    // let location = document.cookie.replace(/(?:(?:^|.*;\s*)ipinfo\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-
     if(this.state.user.username && this.state.user.expire && this.state.user.expire - Date.now() > 1) {
       setTimeout(async () => {
         let logout = await this.api.logoutUser();
