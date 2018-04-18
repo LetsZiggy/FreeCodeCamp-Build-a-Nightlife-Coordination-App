@@ -12,24 +12,8 @@ export class Home {
     this.radio = null;
   }
 
-  async attached() {
-    if(this.state.user.username && this.state.user.expire && this.state.user.expire - Date.now() > 1) {
-      setTimeout(async () => {
-        let logout = await this.api.logoutUser();
-        this.state.user.username = null;
-        this.state.user.expire = null;
-      }, this.state.user.expire - Date.now());
-    }
-
+  attached() {
     this.ps = new PerfectScrollbar('#results');
-
-    window.onunload = async (event) => {
-      if(this.state.user.username) {
-        let store = JSON.parse(localStorage.getItem("freecodecamp-build-a-nightlife-coordination-app")) || {};
-        let data = { username: this.state.user.username, userexpire: this.state.user.expire };
-        localStorage.setItem('freecodecamp-build-a-nightlife-coordination-app', JSON.stringify(data));
-      }
-    };
   }
 
   detached() {
@@ -39,10 +23,12 @@ export class Home {
 
   async openLogin() {
     if(this.state.user.username) {
-      let data = JSON.parse(localStorage.getItem("freecodecamp-build-a-nightlife-coordination-app")) || {};
+      let data = JSON.parse(localStorage.getItem('freecodecamp-build-a-nightlife-coordination-app')) || {};
       let logout = await this.api.logoutUser();
+      clearInterval(this.state.user.interval);
       this.state.user.username = null;
       this.state.user.expire = null;
+      this.state.user.interval = null;
       document.getElementById('login-open-button').innerHTML = 'Login';
 
       data.username = this.state.user.username;

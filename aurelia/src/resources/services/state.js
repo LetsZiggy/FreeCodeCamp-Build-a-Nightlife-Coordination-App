@@ -8,6 +8,7 @@ export const state = {
   user: {
     username: null,
     expire: null,
+    interval: null,
     pending: []
   },
   location: null,

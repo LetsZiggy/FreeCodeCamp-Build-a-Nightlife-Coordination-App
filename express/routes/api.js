@@ -98,7 +98,6 @@ router.post('/rsvp/set', async (req, res, next) => {
   let query = `users.${req.cookies.id}`;
   let date = new Date();
   date.setDate(date.getDate() + 1);
-  console.log('set', req.body.business, req.cookies.id);
 
   let client = await mongo.connect(dbURL);
   let db = await client.db(process.env.DBNAME);
@@ -168,8 +167,7 @@ router.post('/user/create', async (req, res, next) => {
     date.setDate(date.getDate() + 1);
     // res.cookie('id', id, { expires: date, path: '/', httpOnly: true });
     res.cookie('id', id, { expires: date, path: '/', httpOnly: true, secure: true });
-
-    res.json({ create: true, expire: (Date.now() + 86400000) });
+    res.json({ create: true, expire: (date.getTime()) });
   }
   else {
     // res.cookie('id', '', { expires: new Date(), path: '/', httpOnly: true });
@@ -200,7 +198,7 @@ router.post('/user/login', async (req, res, next) => {
         date.setDate(date.getDate() + 1);
         // res.cookie('id', findUser.id, { expires: date, path: '/', httpOnly: true });
         res.cookie('id', findUser.id, { expires: date, path: '/', httpOnly: true, secure: true });
-        res.json({ get: true, expire: (Date.now() + 86400000) });
+        res.json({ get: true, expire: (date.getTime()) });
       }
     }
   }
@@ -237,7 +235,7 @@ router.post('/user/edit', async (req, res, next) => {
       date.setDate(date.getDate() + 1);
       // res.cookie('id', findUser.id, { expires: date, path: '/', httpOnly: true });
       res.cookie('id', findUser.id, { expires: date, path: '/', httpOnly: true, secure: true });
-      res.json({ update: true, expire: (Date.now() + 86400000) });
+      res.json({ update: true, expire: (date.getTime()) });
     }
   }
   else {

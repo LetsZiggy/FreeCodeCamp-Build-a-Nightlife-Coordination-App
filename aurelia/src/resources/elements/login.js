@@ -104,6 +104,12 @@ export class Login {
       this.state.user.username = document.getElementById(`${form}-username`).value;
       this.resetForm(document.getElementById(form));
       document.getElementById('login-open-button').innerHTML = 'Logout';
+      
+      setTimeout(async () => {
+        let logout = await this.api.logoutUser();
+        this.state.user.username = null;
+        this.state.user.expire = null;
+      }, this.state.user.expire - Date.now());
 
       let businessIDs = this.state.businesses.map((v, i, a) => v.id);
       if(businessIDs.length) {
