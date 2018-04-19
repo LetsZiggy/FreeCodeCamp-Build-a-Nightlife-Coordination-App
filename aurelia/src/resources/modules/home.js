@@ -29,12 +29,12 @@ export class Home {
       this.state.user.username = null;
       this.state.user.expire = null;
       this.state.user.interval = null;
-      document.getElementById('login-open-button').innerHTML = 'Login';
 
       data.username = this.state.user.username;
       data.userexpire = this.state.user.expire;
       localStorage.setItem('freecodecamp-build-a-nightlife-coordination-app', JSON.stringify(data));
 
+      document.getElementById('login-open-button').innerHTML = 'Login';
       Object.entries(this.state.goingUser).forEach(([key, value]) => {
         this.state.goingUser[key] = false;
       });
