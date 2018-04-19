@@ -25,10 +25,14 @@ export class Home {
     if(this.state.user.username) {
       let data = JSON.parse(localStorage.getItem('freecodecamp-build-a-nightlife-coordination-app')) || {};
       let logout = await this.api.logoutUser();
-      clearInterval(this.state.user.interval);
+
+      if(this.state.user.interval) {
+        clearInterval(this.state.user.interval);
+        this.state.user.interval = null;
+      }
+
       this.state.user.username = null;
       this.state.user.expire = null;
-      this.state.user.interval = null;
 
       data.username = this.state.user.username;
       data.userexpire = this.state.user.expire;

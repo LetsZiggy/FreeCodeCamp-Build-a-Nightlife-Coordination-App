@@ -102,14 +102,22 @@ export class Login {
     else {
       this.state.user.expire = result.expire;
       this.state.user.username = document.getElementById(`${form}-username`).value;
-      this.resetForm(document.getElementById(form));
-      document.getElementById('login-open-button').innerHTML = 'Logout';
-      
-      setTimeout(async () => {
+
+      this.state.user.interval = setTimeout(async () => {
         let logout = await this.api.logoutUser();
+
+        if(this.state.user.interval) {
+          clearInterval(this.state.user.interval);
+          this.state.user.interval = null;
+        }
+
         this.state.user.username = null;
         this.state.user.expire = null;
-      }, this.state.user.expire - Date.now());
+        console.log('logout');
+      }, (this.state.user.expire - Date.now()));
+
+      this.resetForm(document.getElementById(form));
+      document.getElementById('login-open-button').innerHTML = 'Logout';
 
       let businessIDs = this.state.businesses.map((v, i, a) => v.id);
       if(businessIDs.length) {
