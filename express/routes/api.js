@@ -19,17 +19,15 @@ router.post('/businesses', async (req, res, next) => {
     location.longitude = req.body.longitude;
   }
 
-  let options = {
-    host: 'api.yelp.com',
-    path: `/v3/businesses/search?categories=restaurants&${qs.stringify(location)}`,
-    headers: {
-      Accept: 'application/json',
-      Authorization: process.env.YELP
-    }
-  };
-
   const request = await https.request(
-    options,
+    {
+      host: 'api.yelp.com',
+      path: `/v3/businesses/search?categories=restaurants&${qs.stringify(location)}`,
+      headers: {
+        Accept: 'application/json',
+        Authorization: process.env.YELP
+      }
+    },
     async (response) => {
       response.setEncoding('utf8');
       response.on('data', (data) => {
