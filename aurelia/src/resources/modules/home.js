@@ -9,7 +9,7 @@ export class Home {
 
   constructor(ApiInterface) {
     this.api = ApiInterface;
-    this.radio = null;
+    this.radio = 'radio-signin';
   }
 
   attached() {
@@ -38,6 +38,7 @@ export class Home {
       data.userexpire = this.state.user.expire;
       localStorage.setItem('freecodecamp-build-a-nightlife-coordination-app', JSON.stringify(data));
 
+      this.radio = 'radio-signin';
       document.getElementById('login-open-button').innerHTML = 'Login';
       Object.entries(this.state.goingUser).forEach(([key, value]) => {
         this.state.goingUser[key] = false;
@@ -47,8 +48,9 @@ export class Home {
       if(this.state.login.timer) {
         this.radio = 'radio-signin';
         document.getElementById('radio-delay').checked = true;
-        this.setTimerInterval(this.state, this.radio, 'signin');
+        setTimerInterval(this.state, this.radio, 'signin');
       }
+      document.getElementById(this.radio).checked = true;
       document.getElementById('login-content').style.visibility = 'visible';
       document.getElementById('login-content').style.pointerEvents = 'auto';
     }
@@ -150,25 +152,25 @@ export class Home {
       }
     }
   }
+}
 
-  resetForm(form) {
-    form.reset();
-    Array.from(form.children).forEach((v, i, a) => {
-      if(v.children[0].hasAttribute('data-length') && v.children[0].getAttribute('data-length') !== '0') {
-        v.children[0].setAttribute('data-length', 0);
-      }
-    });
-  }
+function resetForm(form) {
+  form.reset();
+  Array.from(form.children).forEach((v, i, a) => {
+    if(v.children[0].hasAttribute('data-length') && v.children[0].getAttribute('data-length') !== '0') {
+      v.children[0].setAttribute('data-length', 0);
+    }
+  });
+}
 
-  setTimerInterval(state, radio, form) {
-    state.login.interval = setInterval(() => {
-      state.login.timer--;
-      if(state.login.timer === 0) {
-        document.getElementById(radio).checked = true;
-        document.getElementById('wrong-login').style.display = 'none';
-        this.resetForm(document.getElementById(form));
-        clearInterval(state.login.interval);
-      }
-    }, 1000);
-  }
+function setTimerInterval(state, radio, form) {
+  state.login.interval = setInterval(() => {
+    state.login.timer--;
+    if(state.login.timer === 0) {
+      document.getElementById(radio).checked = true;
+      document.getElementById('wrong-login').style.display = 'none';
+      resetForm(document.getElementById(form));
+      clearInterval(state.login.interval);
+    }
+  }, 1000);
 }

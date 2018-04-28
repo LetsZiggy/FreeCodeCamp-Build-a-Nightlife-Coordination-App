@@ -39,4 +39,4 @@ template
             img(src="https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/ic_place_black_24px.svg")
           span.info-number-going(id="${business.id}-number-going") ${state.goingTotal[business.id]} Going
 
-    login(radio.bind="radio")
+    login(state.bind="state" api.bind="api" radio.bind="radio")
