@@ -1,12 +1,11 @@
-import {inject, bindable, bindingMode} from 'aurelia-framework';
+import {bindable, bindingMode} from 'aurelia-framework';
 
 export class Login {
   @bindable({ defaultBindingMode: bindingMode.twoWay }) state;
   @bindable({ defaultBindingMode: bindingMode.oneWay }) api;
   @bindable({ defaultBindingMode: bindingMode.twoWay }) radio;
 
-  constructor(ApiInterface) {
-    this.api = ApiInterface;
+  constructor() {
     this.checkNameValue = null;
     this.checkNameTaken = false;
   }
