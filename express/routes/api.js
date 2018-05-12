@@ -129,7 +129,7 @@ router.post('/user/checkname', async (req, res, next) => {
   let client = await mongo.connect(dbURL);
   let db = await client.db(process.env.DBNAME);
   let collectionIDs = await db.collection('build-a-nightlife-coordination-app-ids');
-  let findID = await collectionIDs.findOne({ type: 'users' }, { _id: 0, type: 0 });
+  let findID = await collectionIDs.findOne({ type: 'users' }, { projection: { _id: 0, type: 0 } });
   client.close();
 
   let takenUsernames = Object.entries(findID).map((v, i, a) => v[1]);
@@ -151,14 +151,11 @@ router.post('/user/create', async (req, res, next) => {
     let client = await mongo.connect(dbURL);
     let db = await client.db(process.env.DBNAME);
     let collectionIDs = await db.collection('build-a-nightlife-coordination-app-ids');
-    let findID = await collectionIDs.findOne({ type: 'users' }, { _id: 0, type: 0 });
+    let findID = await collectionIDs.findOne({ type: 'users' }, { projection: { _id: 0, type: 0 } });
     let id = createID(findID.list);
     data.id = id;
     let query = `list.${id}`;
-    let insertID = await collectionIDs.findOneAndUpdate(
-      { type: 'users' },
-      { $set: { [query]: req.body.username } }
-    );
+    let insertID = await collectionIDs.findOneAndUpdate({ type: 'users' }, { $set: { [query]: req.body.username } });
     let collectionUsers = await db.collection('build-a-nightlife-coordination-app-users');
     let insertUser = await collectionUsers.insertOne(data);
     client.close();
