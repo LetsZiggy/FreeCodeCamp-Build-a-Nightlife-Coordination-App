@@ -21,7 +21,7 @@ router.post('/businesses', async (req, res, next) => {
 
   const request = await https.request(
     {
-      host: 'api.yelp.com',
+      host: `api.yelp.com`,
       path: `/v3/businesses/search?categories=restaurants&${qs.stringify(location)}`,
       headers: {
         Accept: 'application/json',
