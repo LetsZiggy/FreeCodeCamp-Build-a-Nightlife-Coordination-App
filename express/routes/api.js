@@ -41,7 +41,7 @@ router.post('/businesses', async (req, res, next) => {
         let client = await mongo.connect(dbURL);
         let db = await client.db(process.env.DBNAME);
         let collectionRSVPs = await db.collection('build-a-nightlife-coordination-app-rsvp');
-        let find = await collectionRSVPs.find({ id: { $in: businessIDs } }, { projection: { _id: 0, id: 1, users: 1 } }).toArray();
+        let find = await collectionRSVPs.find({ id: { $in: businessIDs } }, { projection: { _id: 0 } }).toArray();
         client.close();
 
         let goingUser = [];
@@ -74,7 +74,7 @@ router.post('/goingUser', async (req, res, next) => {
   let client = await mongo.connect(dbURL);
   let db = await client.db(process.env.DBNAME);
   let collectionRSVPs = await db.collection('build-a-nightlife-coordination-app-rsvp');
-  let find = await collectionRSVPs.find({ id: { $in: req.body.businessIDs } }, { projection: { _id: 0, id: 1, users: 1 } }).toArray();
+  let find = await collectionRSVPs.find({ id: { $in: req.body.businessIDs } }, { projection: { _id: 0 } }).toArray();
   client.close();
 
   let dateNow = new Date();
